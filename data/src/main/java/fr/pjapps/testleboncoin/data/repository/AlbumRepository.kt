@@ -1,7 +1,8 @@
 package fr.pjapps.testleboncoin.data.repository
 
 import androidx.annotation.WorkerThread
-import fr.pjapps.testleboncoin.data.apiclient.model.Picture
+import androidx.lifecycle.LiveData
+import fr.pjapps.testleboncoin.data.database.entity.PictureDb
 
 /**
  * @author Loïc PAUL-JOSEPH.
@@ -9,9 +10,9 @@ import fr.pjapps.testleboncoin.data.apiclient.model.Picture
 interface AlbumRepository {
 
     @WorkerThread
-    fun getAll() : List<Picture>
+    fun getAll(): LiveData<List<PictureDb>>
 
     @WorkerThread
-    fun insert(pictures : List<Picture>)
+    fun insert(pictures: List<PictureDb>)
 
 }

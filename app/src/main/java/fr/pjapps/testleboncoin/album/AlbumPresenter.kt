@@ -1,5 +1,9 @@
 package fr.pjapps.testleboncoin.album
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import fr.pjapps.testleboncoin.data.apiclient.model.Picture
+import fr.pjapps.testleboncoin.data.database.entity.PictureDb
 import fr.pjapps.testleboncoin.data.repository.AlbumRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,12 +22,20 @@ class AlbumPresenter(
     override val job: Job = Job()
     override val coroutineContext: CoroutineContext = job + Dispatchers.IO
 
+    private var allAlbumDb: LiveData<List<PictureDb>>? = null
+    lateinit var allAlbum: LiveData<List<Picture>>
+
     override fun fetchAllAlbum() {
         launch {
-            val pictures = repository.getAll()
-            withContext(Dispatchers.Main) {
-                view?.showAlbum(pictures)
+            if (allAlbumDb == null) {
+                allAlbumDb = repository.getAll()
+                allAlbumDb?.let { data ->
+                    allAlbum = Transformations.map(data) {
+                        it.map { pictureDb -> pictureDb.toCommonData() }
+                    }
+                }
             }
+            withContext(Dispatchers.Main) { view?.showAlbum(allAlbum) }
         }
     }
 

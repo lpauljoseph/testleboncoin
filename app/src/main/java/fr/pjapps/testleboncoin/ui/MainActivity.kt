@@ -2,6 +2,8 @@ package fr.pjapps.testleboncoin.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import fr.pjapps.testleboncoin.R
 import fr.pjapps.testleboncoin.album.AlbumContract
 import fr.pjapps.testleboncoin.data.apiclient.model.Picture
@@ -11,10 +13,8 @@ import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity(), AlbumContract.View {
 
-
     override val presenter: AlbumContract.Presenter by inject { parametersOf(this) }
     private val adapter: PictureAdapter by lazy { PictureAdapter() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity(), AlbumContract.View {
         presenter.stop()
     }
 
-    override fun showAlbum(pictures: List<Picture>) {
-        adapter(pictures)
+    override fun showAlbum(pictures: LiveData<List<Picture>>) {
+        pictures.observe(this, Observer {
+            adapter(it ?: emptyList())
+        })
     }
 }

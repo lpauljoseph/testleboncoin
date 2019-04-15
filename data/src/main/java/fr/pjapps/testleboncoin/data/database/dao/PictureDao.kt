@@ -1,5 +1,6 @@
 package fr.pjapps.testleboncoin.data.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,7 +14,10 @@ import fr.pjapps.testleboncoin.data.database.entity.PictureDb
 interface PictureDao {
 
     @Query("SELECT * FROM pictures")
-    fun loadAll(): List<PictureDb>
+    fun loadAll(): LiveData<List<PictureDb>>
+
+    @Query("SELECT COUNT(*) FROM pictures")
+    fun countAll() : Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg pictures: PictureDb)
